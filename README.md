@@ -28,7 +28,7 @@ Tech used: Vite, Preact, TailwindCSS, SQLite WASM, and an optional Golang server
 
 kpfc is a progressive web app, so it must be served over HTTPS. It also means you don't need to host it permanently: after the first time you open it in a browser, the app is fully downloaded to your device.
 
-The easiest way to start the server to download the latest release and run the executable:
+The easiest way to start is to download the latest release and run the executable:
 
 ```sh
 PORT=8080 ./kpfc

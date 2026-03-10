@@ -14,7 +14,7 @@ export default defineConfig({
             manifest: {
                 name: 'kpfc',
                 short_name: 'kpfc',
-                description: 'Local nutrients tracking app',
+                description: 'Local food tracking app',
                 icons: [
                     {
                         "src": "pwa-64x64.png",
