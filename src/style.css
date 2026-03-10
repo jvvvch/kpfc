@@ -1,0 +1,135 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+:root {
+    --background: #f2f2f7;
+    --foreground: #333333;
+    --card: #ffffff;
+    --primary: #0091ff;
+    --primary-foreground: #ffffff;
+    --sidebar: #ededed;
+    --input: oklch(0.922 0 0);
+    --muted: #e5e5ea;
+    --muted-foreground: #b9b9b9;
+    --destructive: #ff383cdd;
+    --destructive-foreground: #ffffff;
+
+    --border: #d9d9d9;
+
+    --chart-warn: #ff8c28aa;
+    --chart-ok: #34c759aa;
+    --chart-danger: #ff383caa;
+
+    --switch-on: #34c759;
+
+    --radius: 0.625rem;
+
+    --icon-color-chart-1: green;
+    --icon-color-chart-2: red;
+    --icon-color-chart-3: blue;
+    --icon-color-carrot-body: orange;
+    --icon-color-carrot-leaves: green;
+    --icon-color-gear: grey;
+
+    --ease-out-cubic: cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+[data-theme="dark"] {
+    --background: #1c1c1e;
+    --foreground: #ffffff;
+    --card: #2c2c2e;
+    --primary: white;
+    --primary-foreground: black;
+    --sidebar: #000000;
+    --input: #3a3a3c;
+    --muted: #2c2c2e;
+    --muted-foreground: #98989d;
+    --destructive: #ff453a;
+    --destructive-foreground: #ffffff;
+    --border: #38383a;
+
+    --chart-warn: #ff9f0a;
+    --chart-ok: #30d158;
+    --chart-danger: #ff375f;
+
+    --switch-on: #30d158;
+    --radius: 0.625rem;
+
+    --icon-color-chart-warn: #30d158;
+    --icon-color-chart-ok: #ff453a;
+    --icon-color-chart-danger: #0a84ff;
+    --icon-color-carrot-body: #ff9f0a;
+    --icon-color-carrot-leaves: #30d158;
+    --icon-color-gear: #98989d;
+}
+
+@theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-input: var(--input);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+
+    --color-border: var(--border);
+
+    --color-chart-warn: var(--chart-warn);
+    --color-chart-ok: var(--chart-ok);
+    --color-chart-danger: var(--chart-danger);
+
+    --color-switch-on: var(--switch-on);
+
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+    body {
+        @apply bg-background text-foreground;
+        overflow: hidden;
+    }
+    input::-webkit-calendar-picker-indicator {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        cursor: pointer;
+    }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"] {
+        -webkit-appearance: none;
+        margin: 0;
+        -moz-appearance: textfield;
+    }
+
+    .animate-in-from-top {
+        @apply animate-in fade-in slide-in-from-top duration-300;
+    }
+
+    .animate-in-from-top-sm {
+        @apply animate-in fade-in slide-in-from-top-20 duration-300;
+    }
+
+    .animate-in-from-bottom {
+        @apply animate-in fade-in slide-in-from-bottom duration-300;
+    }
+
+    .animate-in-from-left {
+        @apply animate-in fade-in slide-in-from-left duration-300;
+    }
+
+    .animate-in-from-right {
+        @apply animate-in fade-in slide-in-from-right duration-300;
+    }
+}
