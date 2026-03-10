@@ -39,5 +39,5 @@ A minimal Golang server is included if you want to build the executable yourself
 ```sh
 bun install
 bun run build
-go build main.go -o kpfc
+go build -o kpfc main.go
 ```
