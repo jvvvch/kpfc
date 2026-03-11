@@ -82,28 +82,13 @@ export function ItemSeparator() {
     return <div className="bg-border shrink-0 h-px max-w-full my-0 mx-6" />;
 }
 
-const listVariants = cva('overflow-y-auto relative scroll-auto', {
-    variants: {
-        variant: {
-            default: 'flex-1 pb-17',
-            long: 'flex-1 pb-53',
-            compact: '',
-        },
-    },
-    defaultVariants: {
-        variant: 'default',
-    },
-});
-
-export type ListProps = ChildrenProps & VariantProps<typeof listVariants>;
-
 export function List({ children }: ChildrenProps) {
     children = !Array.isArray(children)
         ? children
         : children.filter((child) => !Array.isArray(child) || child.length > 0);
 
     return (
-        <div className="flex w-full flex-col gap-0 bg-card rounded-3xl animate-in-from-top-sm">
+        <div className="flex w-full flex-col gap-0 bg-card rounded-3xl">
             {Array.isArray(children)
                 ? children.filter(Boolean).map((child, index) => (
                       <>
