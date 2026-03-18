@@ -1,5 +1,4 @@
 export * from './dashboard';
-export * from './home';
 export * from './loading';
 export * from './meal';
 export * from './product';

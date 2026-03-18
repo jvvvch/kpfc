@@ -11,7 +11,6 @@ import { db } from '@/domain/db';
 import { useQuery } from '@/hooks';
 import {
     DashboardPage,
-    HomePage,
     LoadingPage,
     MealPage,
     ProductListPage,
@@ -23,7 +22,7 @@ import {
 function Routes() {
     return (
         <Router>
-            <Route path="/" component={() => <HomePage />} />
+            <Route path="/" component={DashboardPage} />
             <Route path="/dashboard" component={DashboardPage} />
             <Route path="/meals/:id" component={MealPage} />
             <Route path="/products" component={ProductListPage} />
