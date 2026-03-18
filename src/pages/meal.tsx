@@ -183,16 +183,19 @@ function IngredientsSection({ ingredients }: IngredientsSectionProps) {
         route('/products');
     };
 
-    const list: VNode[] = ingredients.map((ingredient) => IngredientItem({ ingredient }));
+    const list: VNode[] = ingredients.map((ingredient) =>
+        IngredientItem({ ingredient }),
+    );
     if (draft.isActive()) {
-        list.push(FeatureItemOption({ onClick: addOnClick, title: locale.meals.addProduct }));
+        list.push(
+            FeatureItemOption({
+                onClick: addOnClick,
+                title: locale.meals.addProduct,
+            }),
+        );
     }
 
-    return (
-        <List>
-            {list}
-        </List>
-    );
+    return <List>{list}</List>;
 }
 
 type BottomSectionProps = {

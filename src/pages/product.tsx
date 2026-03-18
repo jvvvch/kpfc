@@ -10,7 +10,14 @@ import { useRef } from 'preact/hooks';
 import { useLocation, useRoute } from 'preact-iso';
 import { uuidv7 } from 'uuidv7';
 import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogDescription,
+    DialogTitle,
     EditableHeader,
+    Icon,
     IconButton,
     List,
     PrimaryButton,
@@ -39,11 +46,12 @@ import { NumberSanitizer } from '@/utils';
 
 type HeaderSectionProps = {
     product: Signal<Product | null>;
+    deleting: Signal<boolean>;
     edit: Signal<boolean>;
     isNew: boolean;
 };
 
-function HeaderSection({ product, edit, isNew }: HeaderSectionProps) {
+function HeaderSection({ product, deleting, edit, isNew }: HeaderSectionProps) {
     const { locale } = useLocale();
     const draft = useMealDraft();
 
@@ -69,7 +77,7 @@ function HeaderSection({ product, edit, isNew }: HeaderSectionProps) {
         if (isNew) {
             return;
         }
-        await ProductQueries.delete(product.value.id);
+        deleting.value = true;
     };
 
     return (
@@ -116,6 +124,10 @@ type MacrosSectionProps = {
 };
 
 function MacrosSection({ product, edit }: MacrosSectionProps) {
+    if (!product.value) {
+        return;
+    }
+
     const { locale } = useLocale();
 
     const hasPiece = useComputed(() => product.value.piece !== null);
@@ -180,7 +192,9 @@ function ProductSettingPiece({ product }: ProductSettingsProps) {
     const unit = useComputed(() => locale.unit[product.value.unit]);
 
     const pieceOnInput = (e: TargetedEvent<HTMLInputElement>) => {
-        e.currentTarget.value = NumberSanitizer.onInput(e.currentTarget.value, { float: true });
+        e.currentTarget.value = NumberSanitizer.onInput(e.currentTarget.value, {
+            float: true,
+        });
     };
     const pieceOnChange = (e: TargetedEvent<HTMLInputElement>) => {
         product.value = {
@@ -218,6 +232,10 @@ function ProductSettingPiece({ product }: ProductSettingsProps) {
 }
 
 function ProductSettingsSection({ product }: ProductSettingsProps) {
+    if (!product.value) {
+        return;
+    }
+
     return (
         <>
             <ProductSettingUnit product={product} />
@@ -293,6 +311,50 @@ function MealDraftActions({ product }: MealDraftActionsProps) {
     );
 }
 
+type DeleteDialogProps = {
+    product: Signal<Product | null>;
+    mealUsageCount: Signal<number>;
+    deleting: Signal<boolean>;
+};
+
+function DeleteDialog({
+    product,
+    deleting,
+    mealUsageCount,
+}: DeleteDialogProps) {
+    const { route } = useLocation();
+    const { locale } = useLocale();
+
+    const cancelOnClick = () => {
+        deleting.value = !deleting.value;
+    };
+    const deleteOnClick = async () => {
+        await ProductQueries.delete(product.value.id);
+        route('/products');
+    };
+
+    const description =
+        mealUsageCount.value === 0
+            ? locale.products.deleteDialog.descriptionNoMeals
+            : locale.products.deleteDialog.description(mealUsageCount.value);
+
+    return (
+        <Dialog isOpen={deleting} onClose={cancelOnClick}>
+            <DialogContent>
+                <DialogTitle>{locale.products.deleteDialog.header}</DialogTitle>
+                <DialogDescription>{description}</DialogDescription>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={cancelOnClick}>{locale.common.cancel}</Button>
+                <Button onClick={deleteOnClick} color="destructive">
+                    <Icon.Trash color="inherit" />{' '}
+                    {locale.products.deleteDialog.button}
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
+}
+
 type BottomSectionProps = {
     product: Signal<Product | null>;
     edit: Signal<boolean>;
@@ -338,6 +400,7 @@ export function ProductPage() {
     const draft = useMealDraft();
 
     const isNew = id === 'new';
+    const deleting = useSignal(false);
     const edit = useSignal(query.edit === 'true' || isNew);
     const init = useRef(false);
 
@@ -346,6 +409,12 @@ export function ProductPage() {
             return ProductQueries.getDefaultProduct();
         }
         return ProductQueries.get(id);
+    });
+    const { data: mealUsageCount } = useQuery(async () => {
+        if (isNew) {
+            return 0;
+        }
+        return ProductQueries.countMealUsage(id);
     });
 
     useSignalEffect(() => {
@@ -372,12 +441,20 @@ export function ProductPage() {
 
     return (
         <Page>
-            <HeaderSection product={product} edit={edit} isNew={isNew} />
-            {product.value !== null && (
-                <MacrosSection product={product} edit={edit} />
-            )}
-            {product.value !== null && edit.value && (
-                <ProductSettingsSection product={product} />
+            <HeaderSection
+                product={product}
+                deleting={deleting}
+                edit={edit}
+                isNew={isNew}
+            />
+            <MacrosSection product={product} edit={edit} />
+            {edit.value && <ProductSettingsSection product={product} />}
+            {deleting.value && (
+                <DeleteDialog
+                    product={product}
+                    deleting={deleting}
+                    mealUsageCount={mealUsageCount}
+                />
             )}
             <BottomSection product={product} edit={edit} />
         </Page>

@@ -29,8 +29,8 @@ import {
 import { ConfigQueries } from '@/domain/queries/config';
 import { MealQueries } from '@/domain/queries/meal';
 import {
-    DayPosition,
     type CalculatedDashboard,
+    type DayPosition,
     getDayPosition,
     macroCodeOrder,
     ProgressCalculator,

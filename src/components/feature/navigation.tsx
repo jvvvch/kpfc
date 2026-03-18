@@ -8,11 +8,12 @@ type TabProps = {
     icon: FunctionalComponent<FillableIconProps>;
     title: string;
     path: string;
+    root?: boolean;
 };
 
-const Tab = ({ icon, title, path: tabPath }: TabProps) => {
+const Tab = ({ icon, title, path: tabPath, root }: TabProps) => {
     const { route, path } = useLocation();
-    const active = path === tabPath;
+    const active = Boolean(path === tabPath || (path === '/' && root));
 
     return (
         <div
@@ -34,7 +35,9 @@ type TabContainerProps = {
 
 function TabContainer({ children }: TabContainerProps) {
     const { path } = useLocation();
-    const activeIndex = children.findIndex((c) => c.props.path === path);
+    const activeIndex = children.findIndex(
+        (c) => c.props.path === path || (path === '/' && c.props.root),
+    );
     if (activeIndex === -1 && path !== '/') {
         return;
     }
@@ -84,6 +87,7 @@ export function Navigation() {
                 path="/dashboard"
                 title={locale.nav.dashboard}
                 icon={Icon.Chart}
+                root
             />
             <Tab
                 path="/products"

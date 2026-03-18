@@ -2,6 +2,7 @@ import { uuidv7 } from 'uuidv7';
 import { db } from '@/domain/db';
 import type { Product } from '@/domain/entities';
 import { Unit } from '@/domain/utils';
+import { countMealUsageSQL } from './sql/count-meal-usage';
 import { deleteSQL } from './sql/delete';
 import { getSQL } from './sql/get';
 import { getManySQL } from './sql/get-many';
@@ -23,6 +24,14 @@ export const ProductQueries = new (class {
 
     async delete(id: string) {
         await db.exec(deleteSQL, { id });
+    }
+
+    async countMealUsage(id: string) {
+        const { count } = await db.selectOne<{ count: number }>(
+            countMealUsageSQL,
+            { id },
+        );
+        return count;
     }
 
     getDefaultProduct(): Product {

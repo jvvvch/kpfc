@@ -12,6 +12,7 @@ export const locales = {
                     day: 'numeric',
                     month: 'short',
                 }),
+            cancel: 'Cancel',
         },
         nav: {
             dashboard: 'Dashboard',
@@ -57,6 +58,13 @@ export const locales = {
             perPiece: 'Per portion',
             hasPiece: 'Use default portion',
             unit: 'Unit of measure',
+            deleteDialog: {
+                header: 'Delete product?',
+                description: (count: number) =>
+                    `Product will also be deleted from meals it is used in: ${count}`,
+                descriptionNoMeals: 'Product is not used in meals',
+                button: 'Delete',
+            },
         },
         settings: {
             header: 'Settings',
@@ -119,6 +127,7 @@ export const locales = {
             at: 'в',
             shortDate: (date: Date) =>
                 `${date.getDate()} ${date.toLocaleString('ru-RU', { month: 'short' }).slice(0, 3)}.`,
+            cancel: 'Отмена',
         },
         nav: {
             dashboard: 'Дашборд',
@@ -164,6 +173,13 @@ export const locales = {
             perPiece: 'На одну порцию',
             hasPiece: 'Есть стандартная порция',
             unit: 'Единица измерения',
+            deleteDialog: {
+                header: 'Удалить продукт?',
+                description: (count: number) =>
+                    `Продукт также будет удален из приемов пищи: ${count}`,
+                descriptionNoMeals: 'Продукт не использован в приемах пищи',
+                button: 'Удалить',
+            },
         },
         settings: {
             header: 'Настройки',

@@ -23,7 +23,7 @@ export function Hint({ children }: ChildrenProps) {
 
 export function Section({ children }: ChildrenProps) {
     return (
-        <h6 className="ml-3 font-semibold text-foreground/50 animate-in-from-top">
+        <h6 className="font-semibold text-foreground/50 animate-in-from-top">
             {children}
         </h6>
     );
@@ -61,7 +61,6 @@ export function EditableHeader({
     onInput: _onInput,
     ...props
 }: EditableHeaderProps) {
-
     const ref = useSignalRef(null);
 
     const fixLayout = () => {

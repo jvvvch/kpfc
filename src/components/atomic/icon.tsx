@@ -8,6 +8,7 @@ const variants = cva('size-5', {
         color: {
             default: 'text-foreground',
             destructive: 'text-destructive',
+            inherit: 'text-inherit',
         },
     },
     defaultVariants: {
