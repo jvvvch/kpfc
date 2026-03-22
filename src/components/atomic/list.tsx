@@ -37,15 +37,13 @@ export function ItemContent({ children }: ChildrenProps) {
 
 export function ItemTitle({ children }: ChildrenProps) {
     return (
-        <p className="w-full truncate font-medium underline-offset-4 block text-lg">
-            {children}
-        </p>
+        <p className="w-full truncate font-medium block text-lg">{children}</p>
     );
 }
 
 export function ItemDescription({ children }: ChildrenProps) {
     return (
-        <p className="block w-full truncate text-muted-foreground text-left leading-none text-sm font-normal">
+        <p className="block w-full truncate text-muted-foreground text-left text-sm font-normal">
             {children}
         </p>
     );
@@ -61,7 +59,7 @@ export function ItemActions({ children }: ChildrenProps) {
 
 export function ItemCaption({ children }: ChildrenProps) {
     return (
-        <p className="min-w-0 w-fit text-left text-lg leading-none font-normal">
+        <p className="min-w-0 w-fit text-left text-lg font-normal block underline-offset-4 ml-auto">
             {children}
         </p>
     );

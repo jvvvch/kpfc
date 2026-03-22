@@ -15,7 +15,7 @@ export function Caption({ children }: ChildrenProps) {
 
 export function Hint({ children }: ChildrenProps) {
     return (
-        <div className="w-full block truncate text-wrap text-muted-foreground text-left leading-none text-sm font-normal py-3 px-4 my-0 min-w-0 animate-in-from-top">
+        <div className="w-full block text-wrap text-muted-foreground text-left leading-5 text-base font-normal pl-1 my-0 min-w-0 animate-in-from-top h-fit">
             {children}
         </div>
     );
@@ -23,7 +23,7 @@ export function Hint({ children }: ChildrenProps) {
 
 export function Section({ children }: ChildrenProps) {
     return (
-        <h6 className="font-semibold text-foreground/50 animate-in-from-top">
+        <h6 className="font-semibold text-foreground/50 animate-in-from-top pl-1">
             {children}
         </h6>
     );

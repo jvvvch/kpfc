@@ -19,6 +19,33 @@ const variants = cva('flex-1 rounded-full relative', {
     },
 });
 
+const selectVariants = cva(
+    'h-full p-0 m-0 bg-card rounded-full w-full border-transparent border-r-10 outline-none text-foreground appearance-none text-lg',
+    {
+        variants: {
+            variant: {
+                default: 'px-4',
+                noBorder: 'pr-4.5 text-right',
+            },
+        },
+        defaultVariants: {
+            variant: 'default',
+        },
+    },
+);
+
+const iconVariants = cva('pointer-events-none absolute select-none', {
+    variants: {
+        variant: {
+            default: 'top-2.5 right-3',
+            noBorder: 'top-1 right-0.25',
+        },
+    },
+    defaultVariants: {
+        variant: 'default',
+    },
+});
+
 export type SelectOption<T> = { label: string; value: T };
 
 export type SelectProps<T> = {
@@ -41,9 +68,7 @@ export function Select<T>({
         <div className={variants({ variant, animate })}>
             <select
                 disabled={noSelect}
-                className={cn(
-                    'h-full p-0 m-0 mr-5 bg-card rounded-full w-full pl-2.5 border-transparent border-r-10 outline-none text-foreground appearance-none',
-                )}
+                className={cn(selectVariants({ variant }))}
                 onChange={(e) => onChange(e.currentTarget.value as T)}
             >
                 {options.map((option) => (
@@ -55,7 +80,7 @@ export function Select<T>({
                     </option>
                 ))}
             </select>
-            <Icon.ChevronDown className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-muted-foreground select-none" />
+            <Icon.ChevronDown className={cn(iconVariants({ variant }))} />
         </div>
     );
 }

@@ -1,10 +1,10 @@
 import type {
     CalculatedMeal,
-    ConfigDailyGoal,
     MacroCode,
     MinMaxValue,
+    SettingGoalsValue,
 } from '../entities';
-import { reduceDailyGoals, sumTotals } from './calc';
+import { sumTotals } from './calc';
 import { macroCodeOrder } from './order';
 
 export enum ProgressStatus {
@@ -31,14 +31,13 @@ export type CalculatedDashboard = Record<
 
 export const ProgressCalculator = new (class {
     calculateDashboard(
-        goals: ConfigDailyGoal[],
+        goals: SettingGoalsValue,
         meals: CalculatedMeal[],
     ): CalculatedDashboard {
-        const goalsReduced = reduceDailyGoals(goals);
         const totals = sumTotals(meals);
         return macroCodeOrder.reduce((v, code) => {
             const total = totals[code];
-            const goal = goalsReduced[code];
+            const goal = goals[code];
             v[code] = {
                 progress: this.calculateProgressState(goal, total),
                 total,

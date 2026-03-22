@@ -111,6 +111,7 @@ function HeaderSection({ isNew, meal }: HeaderSectionProps) {
                         <DateTimePicker
                             value={new Date(meal.value.committed_at)}
                             onChange={commmitedOnChange}
+                            animate="fromTop"
                         />
                     )}
                 </StackRow>

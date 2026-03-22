@@ -15,8 +15,9 @@ import {
     MealPage,
     ProductListPage,
     ProductPage,
+    SettingGoalsPage,
     SettingListPage,
-    SettingPage,
+    SettingProfilePage,
 } from '@/pages';
 
 function Routes() {
@@ -28,7 +29,8 @@ function Routes() {
             <Route path="/products" component={ProductListPage} />
             <Route path="/products/:id" component={ProductPage} />
             <Route path="/settings" component={SettingListPage} />
-            <Route path="/settings/:code" component={SettingPage} />
+            <Route path="/settings/goals" component={SettingGoalsPage} />
+            <Route path="/settings/profile" component={SettingProfilePage} />
             <Route default component={() => <Page>Not found</Page>} />
         </Router>
     );

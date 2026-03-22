@@ -17,13 +17,8 @@ import {
     Page,
 } from '@/components/feature';
 import { useLocale } from '@/contexts';
-import {
-    type ConfigDailyGoal,
-    ConfigSection,
-    type MacroCode,
-    type MinMaxValue,
-} from '@/domain/entities';
-import { ConfigQueries } from '@/domain/queries/config';
+import type { MacroCode, MinMaxValue, SettingGoals } from '@/domain/entities';
+import { SettingQueries } from '@/domain/queries/setting';
 import { macroUnit, minMaxValueOrder } from '@/domain/utils';
 import { useQuery, useSwitch } from '@/hooks';
 import { NumberSanitizer } from '@/utils';
@@ -42,27 +37,37 @@ function HeaderSection() {
 }
 
 type SettingValueProps = {
-    goal: Signal<ConfigDailyGoal>;
+    goals: Signal<SettingGoals>;
+    code: MacroCode;
     valueKey: keyof MinMaxValue;
 };
 
-function SettingValue({ valueKey, goal }: SettingValueProps) {
+const getSettingValue = (
+    goals: SettingGoals,
+    code: MacroCode,
+    valueKey: keyof MinMaxValue,
+) => {
+    return goals.value[code][valueKey];
+};
+
+function SettingValue({ valueKey, code, goals }: SettingValueProps) {
     const { locale } = useLocale();
 
     const { full, short } = locale.settings[valueKey];
-    const enabled = useComputed(() => goal.value.value[valueKey] !== null);
-    const text = useComputed(() => String(goal.value.value[valueKey] || ''));
+    const enabled = useComputed(
+        () => getSettingValue(goals.value, code, valueKey) !== null,
+    );
+    const text = useComputed(() =>
+        String(getSettingValue(goals.value, code, valueKey) || ''),
+    );
 
-    const { onSwitch } = useSwitch(goal.peek().value[valueKey] || 0);
+    const { onSwitch } = useSwitch(
+        getSettingValue(goals.peek(), code, valueKey) || 0,
+    );
 
     const updateValue = (value: number | null) => {
-        goal.value = {
-            ...goal.value,
-            value: {
-                ...goal.value.value,
-                [valueKey]: value,
-            },
-        };
+        goals.value.value[code][valueKey] = value;
+        goals.value = { ...goals.value };
     };
 
     const onInput = (e: TargetedEvent<HTMLInputElement>) => {
@@ -74,7 +79,9 @@ function SettingValue({ valueKey, goal }: SettingValueProps) {
     };
 
     const switchOnClick = () => {
-        batch(() => updateValue(onSwitch(goal.value.value[valueKey])));
+        batch(() =>
+            updateValue(onSwitch(getSettingValue(goals.value, code, valueKey))),
+        );
     };
 
     return (
@@ -90,7 +97,7 @@ function SettingValue({ valueKey, goal }: SettingValueProps) {
                     onInput={onInput}
                     onChange={onChange}
                     placeholder="0"
-                    caption={locale.unit[macroUnit(goal.value.code)]}
+                    caption={locale.unit[macroUnit(code)]}
                     value={text.value}
                 />
             )}
@@ -99,44 +106,41 @@ function SettingValue({ valueKey, goal }: SettingValueProps) {
 }
 
 type SettingValueListProps = {
-    goal: Signal<ConfigDailyGoal>;
+    goals: Signal<SettingGoals>;
+    code: MacroCode;
 };
 
-function SettingValueList({ goal }: SettingValueListProps) {
+function SettingValueList({ goals, code }: SettingValueListProps) {
     const { locale } = useLocale();
     return (
         <>
-            <Section>{locale.macros[goal.value.code].full}</Section>
+            <Section>{locale.macros[code].full}</Section>
             {minMaxValueOrder.map((key) => (
-                <SettingValue valueKey={key} goal={goal} />
+                <SettingValue code={code} valueKey={key} goals={goals} />
             ))}
         </>
     );
 }
 
 type BottomSectionProps = {
-    goal: Signal<ConfigDailyGoal>;
+    goals: Signal<SettingGoals>;
 };
 
-function BottomSection({ goal }: BottomSectionProps) {
+function BottomSection({ goals }: BottomSectionProps) {
     const { locale } = useLocale();
     const { route } = useLocation();
 
     const handleSave = async () => {
-        if (!goal.value) {
+        if (!goals.value) {
             return;
         }
-        await ConfigQueries.update(
-            goal.value.section,
-            goal.value.code,
-            goal.value.value,
-        );
+        await SettingQueries.updateGoals(goals.value.value);
         route('/settings');
     };
 
     return (
         <BottomGroup>
-            {goal.value !== null && (
+            {goals.value !== null && (
                 <PrimaryButton onClick={handleSave}>
                     {locale.common.save}
                 </PrimaryButton>
@@ -145,20 +149,22 @@ function BottomSection({ goal }: BottomSectionProps) {
     );
 }
 
-export function SettingPage() {
+export function SettingGoalsPage() {
     const {
-        params: { code },
+        query: { code },
     } = useRoute();
 
-    const { data: goal } = useQuery(() => {
-        return ConfigQueries.get(ConfigSection.daily_goal, code as MacroCode);
+    const { data: goals } = useQuery(() => {
+        return SettingQueries.getGoals(new Date());
     });
 
     return (
         <Page>
             <HeaderSection />
-            {goal.value && <SettingValueList goal={goal} />}
-            <BottomSection goal={goal} />
+            {goals.value && (
+                <SettingValueList goals={goals} code={code as MacroCode} />
+            )}
+            <BottomSection goals={goals} />
         </Page>
     );
 }

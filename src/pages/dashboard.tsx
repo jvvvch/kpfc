@@ -21,13 +21,9 @@ import {
     ScrollableContent,
 } from '@/components/feature';
 import { useLocale } from '@/contexts';
-import {
-    type CalculatedMeal,
-    ConfigSection,
-    type MacroCode,
-} from '@/domain/entities';
-import { ConfigQueries } from '@/domain/queries/config';
+import type { CalculatedMeal, MacroCode } from '@/domain/entities';
 import { MealQueries } from '@/domain/queries/meal';
+import { SettingQueries } from '@/domain/queries/setting';
 import {
     type CalculatedDashboard,
     type DayPosition,
@@ -221,14 +217,17 @@ export function DashboardPage() {
         return MealQueries.getManyCommittedByDay(date);
     }, [day]);
     const { data: goals } = useQuery(() => {
-        return ConfigQueries.getMany(ConfigSection.daily_goal);
-    });
+        return SettingQueries.getGoals(date);
+    }, [day]);
 
     const calc = useComputed(() => {
         if (!meals.value || !goals.value) {
             return null;
         }
-        return ProgressCalculator.calculateDashboard(goals.value, meals.value);
+        return ProgressCalculator.calculateDashboard(
+            goals.value.value,
+            meals.value,
+        );
     });
 
     const dayPosition = getDayPosition(date);

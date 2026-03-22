@@ -1,5 +1,8 @@
+import { format } from 'date-fns';
 import type { ComponentChildren } from 'preact';
 import {
+    DateTimePicker,
+    type DateTimePickerProps,
     Icon,
     Item,
     ItemActions,
@@ -19,6 +22,7 @@ type FeatureItemProps = {
     title: string;
     description?: string;
     caption?: string;
+    captionDescription?: string;
     icon?: ComponentChildren;
     onClick?: () => void;
 };
@@ -27,6 +31,7 @@ export function FeatureItem({
     title,
     description,
     caption,
+    captionDescription,
     icon = Icon.ChevronRight({}),
     onClick,
 }: FeatureItemProps) {
@@ -39,7 +44,12 @@ export function FeatureItem({
                 )}
             </ItemContent>
             <ItemActions>
-                {caption && <ItemCaption>{caption}</ItemCaption>}
+                <ItemContent>
+                    {caption && <ItemCaption>{caption}</ItemCaption>}
+                    {captionDescription && (
+                        <ItemDescription>{captionDescription}</ItemDescription>
+                    )}
+                </ItemContent>
                 {icon}
             </ItemActions>
         </Item>
@@ -115,6 +125,38 @@ export function FeatureItemSwitch({ title, ...props }: FeatureItemSwitchProps) {
             </ItemContent>
             <ItemActions>
                 <Switch {...props} />
+            </ItemActions>
+        </Item>
+    );
+}
+
+type FeatureItemDateProps = DateTimePickerProps & {
+    title: string;
+    placeholder: string;
+    value: Date | null;
+};
+
+export function FeatureItemDatePicker({
+    title,
+    placeholder,
+    ...props
+}: FeatureItemDateProps) {
+    const dateStr = props.value
+        ? format(props.value, 'dd.MM.yyyy')
+        : placeholder;
+
+    return (
+        <Item>
+            <ItemContent>
+                <ItemTitle>{title}</ItemTitle>
+            </ItemContent>
+            <ItemActions>
+                <span className="text-lg text-foreground">{dateStr}</span>
+                <DateTimePicker
+                    {...props}
+                    icon={Icon.ChevronDown}
+                    type="date"
+                />
             </ItemActions>
         </Item>
     );

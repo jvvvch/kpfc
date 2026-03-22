@@ -75,4 +75,144 @@ VALUES
     ('daily_goal', 'carbs', '{"min":null,"max":null}');
 `;
 
-export const migrations = [initSQL];
+const updateSettingSQL = `
+CREATE TABLE settings (
+    code TEXT NOT NULL,
+    value TEXT NOT NULL,
+    valid_from DATETIME,
+    valid_to DATETIME
+);
+
+INSERT INTO
+    settings (code, value)
+SELECT
+    'goals',
+    json_object(
+        'kcal',
+        json_object(
+            'min',
+            json_extract(
+                (
+                    SELECT
+                        value
+                    FROM
+                        configs
+                    WHERE
+                        section = 'daily_goal'
+                        AND code = 'kcal'
+                ),
+                '$.min'
+            ),
+            'max',
+            json_extract(
+                (
+                    SELECT
+                        value
+                    FROM
+                        configs
+                    WHERE
+                        section = 'daily_goal'
+                        AND code = 'kcal'
+                ),
+                '$.max'
+            )
+        ),
+        'protein',
+        json_object(
+            'min',
+            json_extract(
+                (
+                    SELECT
+                        value
+                    FROM
+                        configs
+                    WHERE
+                        section = 'daily_goal'
+                        AND code = 'protein'
+                ),
+                '$.min'
+            ),
+            'max',
+            json_extract(
+                (
+                    SELECT
+                        value
+                    FROM
+                        configs
+                    WHERE
+                        section = 'daily_goal'
+                        AND code = 'protein'
+                ),
+                '$.max'
+            )
+        ),
+        'fat',
+        json_object(
+            'min',
+            json_extract(
+                (
+                    SELECT
+                        value
+                    FROM
+                        configs
+                    WHERE
+                        section = 'daily_goal'
+                        AND code = 'fat'
+                ),
+                '$.min'
+            ),
+            'max',
+            json_extract(
+                (
+                    SELECT
+                        value
+                    FROM
+                        configs
+                    WHERE
+                        section = 'daily_goal'
+                        AND code = 'fat'
+                ),
+                '$.max'
+            )
+        ),
+        'carbs',
+        json_object(
+            'min',
+            json_extract(
+                (
+                    SELECT
+                        value
+                    FROM
+                        configs
+                    WHERE
+                        section = 'daily_goal'
+                        AND code = 'carbs'
+                ),
+                '$.min'
+            ),
+            'max',
+            json_extract(
+                (
+                    SELECT
+                        value
+                    FROM
+                        configs
+                    WHERE
+                        section = 'daily_goal'
+                        AND code = 'carbs'
+                ),
+                '$.max'
+            )
+        )
+    );
+
+INSERT INTO
+    settings (code, value)
+VALUES
+    (
+        'profile',
+        '{"sex":null,"birth_date":null,"height":null,"weight":null,"activity_level":null}'
+    );
+`;
+
+export const migrations = [initSQL, updateSettingSQL];

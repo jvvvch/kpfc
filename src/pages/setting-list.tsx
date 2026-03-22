@@ -1,9 +1,9 @@
-import { type Signal, useComputed } from '@preact/signals';
-import { For } from '@preact/signals/utils';
+import { type Signal, useComputed, useSignal } from '@preact/signals';
 import { useLocation } from 'preact-iso';
 import {
     Header,
     Hint,
+    Icon,
     List,
     Section,
     type SelectOption,
@@ -14,26 +14,26 @@ import {
     FeatureItemSelect,
     HeaderGroup,
     Page,
+    ScrollableContent,
 } from '@/components/feature';
 import { type Language, Theme, useLocale, useTheme } from '@/contexts';
-import {
-    type ConfigDailyGoal,
-    ConfigSection,
-    type MacroCode,
-    type MinMaxValue,
+import type {
+    MacroCode,
+    SettingGoalsValue,
+    SettingProfileValue,
 } from '@/domain/entities';
-import { ConfigQueries } from '@/domain/queries/config';
+import { SettingQueries } from '@/domain/queries/setting';
 import {
+    calcSurplusAndTDEE,
+    isProfileValidForTDEE,
     macroCodeOrder,
     macroUnit,
     minMaxValueOrder,
-    reduceDailyGoals,
 } from '@/domain/utils';
 import { useQuery } from '@/hooks';
 
 function HeaderSection() {
     const { locale } = useLocale();
-
     return (
         <HeaderGroup>
             <StackRow />
@@ -42,15 +42,136 @@ function HeaderSection() {
     );
 }
 
-type DailyGoalProps = {
-    code: MacroCode;
-    value: MinMaxValue;
+type TDEEItemProps = {
+    tdee: number;
+    expand: Signal<boolean>;
 };
 
-function DailyGoal({ code, value }: DailyGoalProps) {
+export function TDEEItem({ tdee, expand }: TDEEItemProps) {
+    const { locale } = useLocale();
+
+    const onClick = () => {
+        expand.value = !expand.value;
+    };
+
+    const icon = useComputed(() => {
+        const className = expand.value ? 'rotate-90' : '';
+        return (
+            <Icon.ChevronRight
+                className={`transition-transform duration-200 ${className}`}
+            />
+        );
+    });
+
+    return (
+        <FeatureItem
+            onClick={onClick}
+            title={locale.settings.profile.yourTdee}
+            description={locale.settings.profile.tdeeFull}
+            caption={`${tdee.toFixed(0)} ${locale.unit.kcal}`}
+            icon={icon.value}
+        />
+    );
+}
+
+type SurplusItemProps = {
+    relation: 'min' | 'max';
+    value: number;
+    weightValue: number;
+};
+
+export function SurplusItem({
+    relation,
+    value,
+    weightValue,
+}: SurplusItemProps) {
+    if (value === null) {
+        return;
+    }
+    const { locale } = useLocale();
+    const title =
+        locale.settings.profile.calc[value < 0 ? 'deficit' : 'surplus'];
+    const description = locale.settings.profile.calc[relation];
+    let weightSign = '+';
+    if (value < 0) {
+        value = -value;
+    }
+    if (weightValue < 0) {
+        weightValue = -weightValue;
+        weightSign = '-';
+    }
+    const valueStr = `${value.toFixed(0)} ${locale.unit.kcal}`;
+    const weightValueStr = `${weightSign}${weightValue.toFixed(1)} ${locale.unit.kg} ${locale.settings.profile.calc.perWeek}`;
+
+    return (
+        <FeatureItem
+            icon={null}
+            title={title}
+            description={description}
+            caption={valueStr}
+            captionDescription={weightValueStr}
+        />
+    );
+}
+
+type ProfileSectionProps = {
+    profile: SettingProfileValue;
+    goals: SettingGoalsValue;
+};
+
+function ProfileSection({ profile, goals }: ProfileSectionProps) {
     const { locale } = useLocale();
     const { route } = useLocation();
 
+    const expand = useSignal(false);
+
+    const isValid = isProfileValidForTDEE(profile);
+    const { tdee, minSurplus, maxSurplus, minWeightSurplus, maxWeightSurplus } =
+        calcSurplusAndTDEE(profile, goals);
+
+    const profileOnClick = () => {
+        route('/settings/profile');
+    };
+
+    return (
+        <>
+            <Section>{locale.settings.profile.header}</Section>
+            <List>
+                <FeatureItem
+                    onClick={profileOnClick}
+                    title={locale.settings.profile.title}
+                />
+                {tdee !== null && <TDEEItem tdee={tdee} expand={expand} />}
+                {expand.value && (
+                    <>
+                        <SurplusItem
+                            relation="min"
+                            value={minSurplus}
+                            weightValue={minWeightSurplus}
+                        />
+                        <SurplusItem
+                            relation="max"
+                            value={maxSurplus}
+                            weightValue={maxWeightSurplus}
+                        />
+                    </>
+                )}
+            </List>
+            {!isValid && <Hint>{locale.settings.profile.fillProfileHint}</Hint>}
+        </>
+    );
+}
+
+type GoalItemProps = {
+    code: MacroCode;
+    goals: SettingGoalsValue;
+};
+
+function GoalItem({ code, goals }: GoalItemProps) {
+    const { locale } = useLocale();
+    const { route } = useLocation();
+
+    const value = goals[code];
     const captionParts = [];
     for (const key of minMaxValueOrder) {
         if (value[key] !== null) {
@@ -62,7 +183,7 @@ function DailyGoal({ code, value }: DailyGoalProps) {
     }
     const caption = captionParts.join(' ');
 
-    const onClick = () => route(`/settings/${code}`);
+    const onClick = () => route(`/settings/goals?code=${code}`);
 
     return (
         <FeatureItem
@@ -73,24 +194,18 @@ function DailyGoal({ code, value }: DailyGoalProps) {
     );
 }
 
-type DailyGoalSectionProps = {
-    goals: Signal<ConfigDailyGoal[]>;
+type GoalsSectionProps = {
+    goals: SettingGoalsValue;
 };
 
-function DailyGoalsSection({ goals }: DailyGoalSectionProps) {
+function GoalsSection({ goals }: GoalsSectionProps) {
     const { locale } = useLocale();
-
-    const goalsReduced = useComputed(() =>
-        goals.value
-            ? reduceDailyGoals(goals.value)
-            : ConfigQueries.getEmptyDailyGoals(),
-    );
     return (
         <>
             <Section>{locale.settings.dailyGoals}</Section>
             <List>
                 {macroCodeOrder.map((code) => (
-                    <DailyGoal code={code} value={goalsReduced.value[code]} />
+                    <GoalItem code={code} goals={goals} />
                 ))}
             </List>
         </>
@@ -112,51 +227,48 @@ const addMacroKcal = (
 };
 
 type KcalMismatchHintSectionProps = {
-    goals: Signal<ConfigDailyGoal[]>;
+    goals: SettingGoalsValue;
 };
 
 function KcalMismatchHintSection({ goals }: KcalMismatchHintSectionProps) {
     const { locale } = useLocale();
-    const hints = useComputed(() => {
-        const hints: { text: string; description: string }[] = [];
-        let min = 0,
-            max = 0,
-            macrosMin = 0,
-            macrosMax = 0;
-        for (const goal of goals.value) {
-            if (goal.code === 'kcal') {
-                min = goal.value.min;
-                max = goal.value.max;
-                continue;
-            }
-            macrosMin = addMacroKcal(macrosMin, goal.code, goal.value.min);
-            macrosMax = addMacroKcal(macrosMax, goal.code, goal.value.max);
+    const hints: { text: string; description: string }[] = [];
+    let min = 0,
+        max = 0,
+        macrosMin = 0,
+        macrosMax = 0;
+    for (const code of macroCodeOrder) {
+        if (code === 'kcal') {
+            min = goals[code].min;
+            max = goals[code].max;
+            continue;
         }
-        if (max !== null && macrosMin !== null && macrosMin > max) {
-            hints.push({
-                text: `⚠️ ${locale.settings.minMacrosHigherThanMaxKcal}`,
-                description: `${macrosMin} / ${max}`,
-            });
-        }
-        if (min !== null && macrosMax !== null && macrosMax < min) {
-            hints.push({
-                text: `⚠️ ${locale.settings.maxMacrosLowerThanMinKcal}`,
-                description: `${macrosMax} / ${min}`,
-            });
-        }
-        return hints;
-    });
+        macrosMin = addMacroKcal(macrosMin, code, goals[code].min);
+        macrosMax = addMacroKcal(macrosMax, code, goals[code].max);
+    }
+    if (max !== null && macrosMin !== null && macrosMin > max) {
+        hints.push({
+            text: `⚠️ ${locale.settings.minMacrosHigherThanMaxKcal}`,
+            description: `${macrosMin} / ${max}`,
+        });
+    }
+    if (min !== null && macrosMax !== null && macrosMax < min) {
+        hints.push({
+            text: `⚠️ ${locale.settings.maxMacrosLowerThanMinKcal}`,
+            description: `${macrosMax} / ${min}`,
+        });
+    }
 
     return (
-        <For each={hints}>
-            {({ text, description }) => (
+        <>
+            {hints.map(({ text, description }) => (
                 <Hint>
                     {text}
                     <br />
-                    <span className="text-xs font-bold">{description}</span>
+                    <span className="font-bold">{description}</span>
                 </Hint>
-            )}
-        </For>
+            ))}
+        </>
     );
 }
 
@@ -202,15 +314,30 @@ function SystemSettingsSection() {
 
 export function SettingListPage() {
     const { data: goals } = useQuery(() => {
-        return ConfigQueries.getMany(ConfigSection.daily_goal);
+        return SettingQueries.getGoals(new Date());
+    });
+    const { data: profile } = useQuery(() => {
+        return SettingQueries.getProfile(new Date());
     });
 
     return (
         <Page>
             <HeaderSection />
-            <DailyGoalsSection goals={goals} />
-            {goals.value && <KcalMismatchHintSection goals={goals} />}
-            <SystemSettingsSection />
+            <ScrollableContent>
+                {goals.value && (
+                    <>
+                        {profile.value && (
+                            <ProfileSection
+                                profile={profile.value.value}
+                                goals={goals.value.value}
+                            />
+                        )}
+                        <GoalsSection goals={goals.value.value} />
+                        <KcalMismatchHintSection goals={goals.value.value} />
+                    </>
+                )}
+                <SystemSettingsSection />
+            </ScrollableContent>
         </Page>
     );
 }

@@ -67,6 +67,45 @@ export const locales = {
             },
         },
         settings: {
+            profile: {
+                yourTdee: 'Your TDEE',
+                tdeeFull: 'Total daily energy expenditure',
+                calc: {
+                    min: 'On minimal goal',
+                    max: 'On maximal goal',
+                    deficit: 'Deficit',
+                    surplus: 'Surplus',
+                    perWeek: 'per week',
+                },
+                header: 'Information',
+                fillProfileHint: 'Fill your profile to calculate TDEE',
+                title: 'Profile',
+                sexHeader: 'Sex',
+                unspecified: 'Unspecified',
+                sex: {
+                    male: 'Male',
+                    female: 'Female',
+                },
+                activityLevelHeader: 'Activity',
+                activityLevel: {
+                    sedentary: 'Sedentary',
+                    light: 'Light',
+                    moderate: 'Moderate',
+                    heavy: 'Heavy',
+                    athlete: 'Athlete',
+                },
+                activityLevelHint: {
+                    title: 'Activity level',
+                    sedentary: 'sedentary life style, office job',
+                    light: '1-3 excercises per week',
+                    moderate: '3-5 excercises per week',
+                    heavy: 'excercise everyday',
+                    athlete: 'professional athlete',
+                },
+                height: 'Height',
+                weight: 'Weight',
+                birthDate: 'Birth date',
+            },
             header: 'Settings',
             dailyGoals: 'Daily goals',
             min: {
@@ -94,7 +133,9 @@ export const locales = {
             gram: 'g',
             ml: 'ml',
             percent: '%',
-            piece: 'pcs.',
+            piece: 'pcs',
+            kg: 'kg',
+            cm: 'cm',
         },
         macros: {
             kcal: {
@@ -182,6 +223,46 @@ export const locales = {
             },
         },
         settings: {
+            profile: {
+                yourTdee: 'Ваш TDEE',
+                tdeeFull: 'Средний расход в день',
+                header: 'Информация',
+                calc: {
+                    min: 'Минимальная цель',
+                    max: 'Максимальная цель',
+                    deficit: 'Дефицит',
+                    surplus: 'Профицит',
+                    perWeek: 'в неделю',
+                },
+                fillProfileHint:
+                    'Заполните профиль для подсчета среднего расхода калорий за день',
+                title: 'Профиль',
+                sexHeader: 'Пол',
+                unspecified: 'Не указано',
+                sex: {
+                    male: 'Мужчина',
+                    female: 'Женщина',
+                },
+                activityLevelHeader: 'Активность',
+                activityLevel: {
+                    sedentary: 'Минимальная',
+                    light: 'Легкая',
+                    moderate: 'Умеренная',
+                    heavy: 'Высокая',
+                    athlete: 'Очень высокая',
+                },
+                activityLevelHint: {
+                    title: 'Уровень физической активности',
+                    sedentary: 'сидячий образ жизни',
+                    light: '1-3 тренировки в неделю',
+                    moderate: '3-5 тренировок в неделю',
+                    heavy: 'тренировки каждый день',
+                    athlete: 'профессинальный спорт',
+                },
+                height: 'Рост',
+                weight: 'Вес',
+                birthDate: 'Дата рождения',
+            },
             header: 'Настройки',
             dailyGoals: 'Цели на день',
             min: {
@@ -210,6 +291,8 @@ export const locales = {
             ml: 'мл',
             percent: '%',
             piece: 'шт.',
+            kg: 'кг',
+            cm: 'см',
         },
         macros: {
             kcal: {

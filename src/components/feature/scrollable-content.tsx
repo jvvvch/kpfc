@@ -29,7 +29,7 @@ export function ScrollableContent({ children }: ChildrenProps) {
 
     return (
         <div
-            className="overflow-y-auto relative scroll-auto flex-1"
+            className="overflow-y-auto relative scroll-auto flex-1 flex flex-col gap-3"
             style={{ paddingBottom: padding.value }}
         >
             {children}

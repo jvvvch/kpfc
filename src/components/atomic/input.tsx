@@ -13,7 +13,7 @@ export function Input({
             onInput={onInput}
             onChange={onChange}
             value={value}
-            className="px-2.5 py-1 placeholder-muted-foreground rounded-none border-0 bg-transparent shadow-none flex-1 pr-1.5 text-base outline-none"
+            className="px-2.5 py-1 placeholder-muted-foreground rounded-none border-0 bg-transparent shadow-none flex-1 pr-1.5 text-lg outline-none"
             type="text"
             placeholder={placeholder}
         />
