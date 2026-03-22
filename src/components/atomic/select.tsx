@@ -25,7 +25,7 @@ const selectVariants = cva(
         variants: {
             variant: {
                 default: 'px-4',
-                noBorder: 'pr-4.5 text-right',
+                noBorder: 'pr-4.5 text-right [text-align-last:right]',
             },
         },
         defaultVariants: {
