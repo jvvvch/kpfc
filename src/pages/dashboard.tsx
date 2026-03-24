@@ -49,7 +49,7 @@ function HeaderSection({ date }: HeaderSectionProps) {
         route(`/dashboard?day=${format(newDate, dateFormat)}`);
     };
 
-    const headerDate = locale.common.shortDate(date);
+    const headerDate = locale.datetime.short(date);
 
     return (
         <HeaderGroup>
@@ -201,7 +201,7 @@ function BottomSection() {
     return (
         <BottomGroup>
             <PrimaryButton onClick={onClick}>
-                {locale.meals.create}
+                {locale.meals.addNew}
             </PrimaryButton>
         </BottomGroup>
     );

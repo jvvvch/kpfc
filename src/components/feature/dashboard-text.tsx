@@ -6,6 +6,12 @@ import { cn } from '@/utils';
 const bold = 'font-bold';
 const bigBold = 'text-3xl font-bold';
 
+const macroEmoji: Omit<Record<MacroCode, string>, 'kcal'> = {
+    protein: '🥩',
+    fat: '🫒',
+    carbs: '🍌',
+};
+
 export const DashboardText = {
     KcalTitle: (locale: Locale, total: number) => (
         <>
@@ -20,7 +26,23 @@ export const DashboardText = {
         dayPositon: DayPosition,
         value: number,
     ) => {
-        const prefix = locale.dashboard.progress[status]?.[dayPositon];
+        let prefix: string | undefined;
+        if (status === ProgressStatus.less) {
+            if (dayPositon === DayPosition.past) {
+                prefix = locale.dashboard.progress.under;
+            }
+            if (dayPositon === DayPosition.current) {
+                prefix = locale.dashboard.progress.needMore;
+            }
+        } else if (status === ProgressStatus.between) {
+            if (dayPositon === DayPosition.current) {
+                prefix = locale.dashboard.progress.canMore;
+            }
+        } else if (status === ProgressStatus.more) {
+            if (dayPositon !== DayPosition.future) {
+                prefix = locale.dashboard.progress.over;
+            }
+        }
 
         if (!prefix) {
             if (
@@ -43,7 +65,9 @@ export const DashboardText = {
     },
 
     MacroTitle: (locale: Locale, code: MacroCode) => (
-        <span className={bold}>{locale.macros[code].emoji}</span>
+        <span className={bold}>
+            {macroEmoji[code]} {locale.macros[code].full[0]}
+        </span>
     ),
 
     MacroDescription: (

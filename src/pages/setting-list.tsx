@@ -16,7 +16,7 @@ import {
     Page,
     ScrollableContent,
 } from '@/components/feature';
-import { type Language, Theme, useLocale, useTheme } from '@/contexts';
+import { Theme, useLocale, useTheme } from '@/contexts';
 import type {
     MacroCode,
     SettingGoalsValue,
@@ -31,13 +31,14 @@ import {
     minMaxValueOrder,
 } from '@/domain/utils';
 import { useQuery } from '@/hooks';
+import type { Language } from '@/i18n';
 
 function HeaderSection() {
     const { locale } = useLocale();
     return (
         <HeaderGroup>
             <StackRow />
-            <Header>{locale.settings.header}</Header>
+            <Header>{locale.settings.title}</Header>
         </HeaderGroup>
     );
 }
@@ -66,8 +67,8 @@ export function TDEEItem({ tdee, expand }: TDEEItemProps) {
     return (
         <FeatureItem
             onClick={onClick}
-            title={locale.settings.profile.yourTdee}
-            description={locale.settings.profile.tdeeFull}
+            title={locale.tdee.title}
+            description={locale.tdee.description}
             caption={`${tdee.toFixed(0)} ${locale.unit.kcal}`}
             icon={icon.value}
         />
@@ -89,26 +90,27 @@ export function SurplusItem({
         return;
     }
     const { locale } = useLocale();
-    const title =
-        locale.settings.profile.calc[value < 0 ? 'deficit' : 'surplus'];
-    const description = locale.settings.profile.calc[relation];
+    const title = locale.tdee.forGoal[relation];
+    const description = locale.tdee[value < 0 ? 'deficit' : 'surplus'];
+    let valueSign = '+';
     let weightSign = '+';
     if (value < 0) {
         value = -value;
+        valueSign = '-';
     }
     if (weightValue < 0) {
         weightValue = -weightValue;
         weightSign = '-';
     }
-    const valueStr = `${value.toFixed(0)} ${locale.unit.kcal}`;
-    const weightValueStr = `${weightSign}${weightValue.toFixed(1)} ${locale.unit.kg} ${locale.settings.profile.calc.perWeek}`;
+    const valueStr = `${valueSign}${value.toFixed(0)} ${locale.unit.kcal}`;
+    const weightValueStr = `${weightSign}${weightValue.toFixed(1)} ${locale.unit.kg} ${locale.common.perWeek}`;
 
     return (
         <FeatureItem
             icon={null}
             title={title}
-            description={description}
             caption={valueStr}
+            description={description}
             captionDescription={weightValueStr}
         />
     );
@@ -135,11 +137,11 @@ function ProfileSection({ profile, goals }: ProfileSectionProps) {
 
     return (
         <>
-            <Section>{locale.settings.profile.header}</Section>
+            <Section>{locale.settings.info}</Section>
             <List>
                 <FeatureItem
                     onClick={profileOnClick}
-                    title={locale.settings.profile.title}
+                    title={locale.profile.title}
                 />
                 {tdee !== null && <TDEEItem tdee={tdee} expand={expand} />}
                 {expand.value && (
@@ -157,7 +159,7 @@ function ProfileSection({ profile, goals }: ProfileSectionProps) {
                     </>
                 )}
             </List>
-            {!isValid && <Hint>{locale.settings.profile.fillProfileHint}</Hint>}
+            {!isValid && <Hint>{locale.profile.fillHint}</Hint>}
         </>
     );
 }
@@ -175,7 +177,7 @@ function GoalItem({ code, goals }: GoalItemProps) {
     const captionParts = [];
     for (const key of minMaxValueOrder) {
         if (value[key] !== null) {
-            captionParts.push(`${locale.settings[key].short} ${value[key]}`);
+            captionParts.push(`${locale.goals[key].short} ${value[key]}`);
         }
     }
     if (captionParts.length) {
@@ -202,7 +204,7 @@ function GoalsSection({ goals }: GoalsSectionProps) {
     const { locale } = useLocale();
     return (
         <>
-            <Section>{locale.settings.dailyGoals}</Section>
+            <Section>{locale.goals.title}</Section>
             <List>
                 {macroCodeOrder.map((code) => (
                     <GoalItem code={code} goals={goals} />
@@ -248,13 +250,13 @@ function KcalMismatchHintSection({ goals }: KcalMismatchHintSectionProps) {
     }
     if (max !== null && macrosMin !== null && macrosMin > max) {
         hints.push({
-            text: `⚠️ ${locale.settings.minMacrosHigherThanMaxKcal}`,
+            text: `⚠️ ${locale.goals.hintMinMacrosMaxKcal}`,
             description: `${macrosMin} / ${max}`,
         });
     }
     if (min !== null && macrosMax !== null && macrosMax < min) {
         hints.push({
-            text: `⚠️ ${locale.settings.maxMacrosLowerThanMinKcal}`,
+            text: `⚠️ ${locale.goals.hintMaxMacrosMinKcal}`,
             description: `${macrosMax} / ${min}`,
         });
     }
@@ -277,8 +279,8 @@ function SystemSettingsSection() {
     const { language, locale, available } = useLocale();
 
     const themeOptions: SelectOption<Theme>[] = [
-        { label: locale.settings.themes.light, value: Theme.light },
-        { label: locale.settings.themes.dark, value: Theme.dark },
+        { label: locale.settings.theme.light, value: Theme.light },
+        { label: locale.settings.theme.dark, value: Theme.dark },
     ];
 
     const themeOnChange = (value: Theme) => {
@@ -295,7 +297,7 @@ function SystemSettingsSection() {
             <List>
                 <FeatureItemSelect
                     variant="noBorder"
-                    title={locale.settings.theme}
+                    title={locale.settings.theme.title}
                     onChange={themeOnChange}
                     selected={theme.value}
                     options={themeOptions}

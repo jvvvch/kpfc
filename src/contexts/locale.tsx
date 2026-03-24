@@ -6,13 +6,9 @@ import {
 } from '@preact/signals';
 import { createContext } from 'preact';
 import { useContext } from 'preact/hooks';
-import { locales } from '@/i18n';
+import { type Language, type Locale, locales } from '@/i18n';
 import type { ChildrenProps } from '@/types';
 import { LocalStorage } from '@/utils';
-
-export type Language = keyof typeof locales;
-
-type Locale = (typeof locales)[Language];
 
 const LocaleState = createContext<{
     available: { label: string; value: Language }[];

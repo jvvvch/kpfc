@@ -104,14 +104,14 @@ function HeaderSection({ product, deleting, edit, isNew }: HeaderSectionProps) {
                     value={product.value?.name || ''}
                     edit={edit.value}
                     onChange={(e) => onChange('name', e)}
-                    placeholder={locale.products.createHeaderPlaceholder}
+                    placeholder={locale.products.namePlaceholder}
                 />
                 <EditableHeader
                     size="sm"
                     value={product.value?.brand || ''}
                     edit={edit.value}
                     onChange={(e) => onChange('brand', e)}
-                    placeholder={locale.products.createBrandPlaceholder}
+                    placeholder={locale.products.brandPlaceholder}
                 />
             </StackCol>
         </HeaderGroup>
@@ -174,7 +174,7 @@ function ProductSettingUnit({ product }: ProductSettingsProps) {
     return (
         <List>
             <FeatureItemSelect
-                title={locale.products.unit}
+                title={locale.unit.title}
                 options={unitOptions.value}
                 selected={product.value.unit}
                 onChange={unitOnChange}
@@ -305,7 +305,7 @@ function MealDraftActions({ product }: MealDraftActionsProps) {
                 )}
             />
             <PrimaryButton onClick={addOnClick}>
-                {locale.meals.addProduct}
+                {locale.products.add}
             </PrimaryButton>
         </>
     );
@@ -335,20 +335,21 @@ function DeleteDialog({
 
     const description =
         mealUsageCount.value === 0
-            ? locale.products.deleteDialog.descriptionNoMeals
-            : locale.products.deleteDialog.description(mealUsageCount.value);
+            ? locale.products.deleteDialog.description.noMeals
+            : locale.products.deleteDialog.description.hasMeals(
+                  mealUsageCount.value,
+              );
 
     return (
         <Dialog isOpen={deleting} onClose={cancelOnClick}>
             <DialogContent>
-                <DialogTitle>{locale.products.deleteDialog.header}</DialogTitle>
+                <DialogTitle>{locale.products.deleteDialog.title}</DialogTitle>
                 <DialogDescription>{description}</DialogDescription>
             </DialogContent>
             <DialogActions>
                 <Button onClick={cancelOnClick}>{locale.common.cancel}</Button>
                 <Button onClick={deleteOnClick} color="destructive">
-                    <Icon.Trash color="inherit" />{' '}
-                    {locale.products.deleteDialog.button}
+                    <Icon.Trash color="inherit" /> {locale.common.delete}
                 </Button>
             </DialogActions>
         </Dialog>

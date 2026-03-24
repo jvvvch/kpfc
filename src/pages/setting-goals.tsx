@@ -31,7 +31,7 @@ function HeaderSection() {
             <HeaderActions>
                 <IconButton.ChevronLeft onClick={() => window.history.back()} />
             </HeaderActions>
-            <Header>{locale.settings.dailyGoals}</Header>
+            <Header>{locale.goals.title}</Header>
         </HeaderGroup>
     );
 }
@@ -53,7 +53,7 @@ const getSettingValue = (
 function SettingValue({ valueKey, code, goals }: SettingValueProps) {
     const { locale } = useLocale();
 
-    const { full, short } = locale.settings[valueKey];
+    const { full, short } = locale.goals[valueKey];
     const enabled = useComputed(
         () => getSettingValue(goals.value, code, valueKey) !== null,
     );

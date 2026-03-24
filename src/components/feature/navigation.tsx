@@ -85,18 +85,18 @@ export function Navigation() {
         <TabContainer>
             <Tab
                 path="/dashboard"
-                title={locale.nav.dashboard}
+                title={locale.dashboard.title}
                 icon={Icon.Chart}
                 root
             />
             <Tab
                 path="/products"
-                title={locale.nav.products}
+                title={locale.products.title}
                 icon={Icon.Carrot}
             />
             <Tab
                 path="/settings"
-                title={locale.nav.settings}
+                title={locale.settings.title}
                 icon={Icon.Gear}
             />
         </TabContainer>

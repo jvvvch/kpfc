@@ -30,9 +30,7 @@ function HeaderSection() {
                 )}
             </HeaderActions>
             <Header>
-                {draft.isActive()
-                    ? locale.meals.addProduct
-                    : locale.products.header}
+                {draft.isActive() ? locale.products.add : locale.products.title}
             </Header>
         </HeaderGroup>
     );
@@ -72,7 +70,7 @@ function BottomSection() {
     return (
         <BottomGroup>
             <PrimaryButton onClick={createOnClick}>
-                {locale.products.create}
+                {locale.products.createNew}
             </PrimaryButton>
         </BottomGroup>
     );
@@ -103,7 +101,7 @@ export function ProductListPage() {
         <Page>
             <HeaderSection />
             <Search
-                placeholder={locale.products.searchPlaceholder}
+                placeholder={locale.products.namePlaceholder}
                 onInput={searchOnInput}
                 value={filter.value}
             />

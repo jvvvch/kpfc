@@ -37,7 +37,7 @@ function HeaderSection() {
             <HeaderActions>
                 <IconButton.ChevronLeft onClick={() => window.history.back()} />
             </HeaderActions>
-            <Header>{locale.settings.profile.title}</Header>
+            <Header>{locale.profile.title}</Header>
         </HeaderGroup>
     );
 }
@@ -49,9 +49,9 @@ type SettingProfileProps = {
 function SettingValueSex({ profile }: SettingProfileProps) {
     const { locale } = useLocale();
     const options: SelectOption<Sex | ''>[] = [
-        { label: locale.settings.profile.unspecified, value: '' },
-        { label: locale.settings.profile.sex.male, value: Sex.male },
-        { label: locale.settings.profile.sex.female, value: Sex.female },
+        { label: locale.common.unspecified, value: '' },
+        { label: locale.profile.sex.male, value: Sex.male },
+        { label: locale.profile.sex.female, value: Sex.female },
     ];
 
     const onChange = (value: Sex | '') => {
@@ -62,7 +62,7 @@ function SettingValueSex({ profile }: SettingProfileProps) {
     return (
         <FeatureItemSelect
             variant="noBorder"
-            title={locale.settings.profile.sexHeader}
+            title={locale.profile.sex.title}
             options={options}
             selected={profile.value.value.sex}
             onChange={onChange}
@@ -79,9 +79,9 @@ function SettingValueBirthDate({ profile }: SettingProfileProps) {
 
     return (
         <FeatureItemDatePicker
-            title={locale.settings.profile.birthDate}
+            title={locale.profile.birthDate}
             value={profile.value.value.birth_date}
-            placeholder={locale.settings.profile.unspecified}
+            placeholder={locale.common.unspecified}
             onChange={onChange}
         />
     );
@@ -111,11 +111,11 @@ function SettingValueHeightWeight({ profile, type }: SettingHeightWeightProps) {
 
     return (
         <FeatureItemTextInput
-            title={locale.settings.profile[type]}
+            title={locale.profile[type]}
             onChange={onChange}
             onInput={onInput}
             value={String(profile.value.value[type] || '')}
-            placeholder={locale.settings.profile.unspecified}
+            placeholder={locale.common.unspecified}
             caption={unit}
         />
     );
@@ -124,9 +124,9 @@ function SettingValueHeightWeight({ profile, type }: SettingHeightWeightProps) {
 function SettingValueActivityLevel({ profile }: SettingProfileProps) {
     const { locale } = useLocale();
     const options: SelectOption<ActivityLevel | ''>[] = [
-        { label: locale.settings.profile.unspecified, value: '' },
+        { label: locale.common.unspecified, value: '' },
         ...activityLevelOrder.map((value) => ({
-            label: locale.settings.profile.activityLevel[value],
+            label: locale.profile.activityLevel[value].title,
             value,
         })),
     ];
@@ -140,7 +140,7 @@ function SettingValueActivityLevel({ profile }: SettingProfileProps) {
         <FeatureItemSelect
             variant="noBorder"
             onChange={onChange}
-            title={locale.settings.profile.activityLevelHeader}
+            title={locale.profile.activityLevel.title}
             options={options}
             selected={profile.value.value.activity_level}
         />
@@ -164,15 +164,15 @@ function ActivityLevelHintSection() {
 
     return (
         <>
-            <Hint>{locale.settings.profile.activityLevelHint.title}:</Hint>
+            <Hint>{locale.profile.activityLevel.description}:</Hint>
             <div className="flex flex-col gap-1">
                 {activityLevelOrder.map((level) => (
                     <HeaderActions>
                         <span className="animate-in-from-top pl-1 text-muted-foreground">
-                            {locale.settings.profile.activityLevel[level]}
+                            {locale.profile.activityLevel[level].title}
                         </span>
                         <span className="animate-in-from-top text-muted-foreground">
-                            {locale.settings.profile.activityLevelHint[level]}
+                            {locale.profile.activityLevel[level].description}
                         </span>
                     </HeaderActions>
                 ))}

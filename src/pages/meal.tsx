@@ -41,15 +41,12 @@ function HeaderSection({ isNew, meal }: HeaderSectionProps) {
     const { locale } = useLocale();
     const draft = useMealDraft();
 
-    const dateStr = useComputed(() => {
-        return format(
-            meal.value.committed_at,
-            `dd.MM.yyyy '${locale.common.at}' HH:mm`,
-        );
-    });
+    const dateStr = useComputed(() =>
+        locale.datetime.at(new Date(meal.value.committed_at)),
+    );
     const eaten = useComputed(() =>
         meal.value.portion < 1
-            ? `${locale.meals.eaten} ${Math.floor(meal.value.portion * 100)}%`
+            ? `${locale.meals.eaten}: ${Math.floor(meal.value.portion * 100)}%`
             : null,
     );
 
@@ -102,7 +99,7 @@ function HeaderSection({ isNew, meal }: HeaderSectionProps) {
                 value={meal.value.name}
                 edit={draft.isActive()}
                 onChange={headerOnChange}
-                placeholder={locale.meals.createHeaderPlaceholder}
+                placeholder={locale.meals.namePlaceholder}
             />
             <HeaderActions>
                 <StackRow>
@@ -191,7 +188,7 @@ function IngredientsSection({ ingredients }: IngredientsSectionProps) {
         list.push(
             FeatureItemOption({
                 onClick: addOnClick,
-                title: locale.meals.addProduct,
+                title: locale.products.add,
             }),
         );
     }
